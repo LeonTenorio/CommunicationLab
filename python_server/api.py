@@ -46,7 +46,10 @@ class Commands(Resource):
             if(len(commands) > 1):
                 pyautogui.hotkey(commands[0], commands[1])
             else:
-                pyautogui.press(new_key)
+                if(new_key == "click"):
+                    pyautogui.click()
+                else:
+                    pyautogui.press(new_key)
 
     def put(self):
         # try:

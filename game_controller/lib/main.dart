@@ -5,10 +5,7 @@ import 'package:game_controller/screens/pair.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
-  //     .then((_) {
   runApp(MyApp());
-  // });
 }
 
 class MyApp extends StatelessWidget {

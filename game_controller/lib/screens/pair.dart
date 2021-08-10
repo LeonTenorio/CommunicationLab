@@ -29,7 +29,6 @@ class _PairScreenState extends State<PairScreen> {
 
   @override
   void initState() {
-    qrKey = GlobalKey(debugLabel: 'QR');
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitDown]);
     super.initState();
   }
@@ -85,10 +84,11 @@ class _PairScreenState extends State<PairScreen> {
                               bool success = await api.auth(
                                   values.ip + ":" + values.port, values.pin);
                               if (success) {
-                                Navigator.push(
+                                Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => GamePad()));
+                                        builder: (context) => GamePad()),
+                                    (route) => false);
                               }
                             }
                           },
@@ -147,6 +147,7 @@ class _PairScreenState extends State<PairScreen> {
 
   @override
   void dispose() {
+    controller!.pauseCamera();
     controller?.dispose();
     super.dispose();
   }
