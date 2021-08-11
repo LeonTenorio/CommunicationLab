@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-String url = 'http://192.168.1.13:8000';
+String url = '';
 
 Client client = Client();
 

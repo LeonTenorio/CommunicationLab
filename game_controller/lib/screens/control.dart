@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:game_controller/api/control.dart';
+import 'package:game_controller/screens/pair.dart';
 import 'package:game_controller/widgets/button.dart';
 
 final int pingSecondsTime = 2;
@@ -273,6 +274,21 @@ class _GamePadState extends State<GamePad> {
                       ),
                     )),
               ],
+            ),
+            Container(
+              alignment: Alignment.bottomCenter,
+              child: TextButton(
+                child: Text(
+                  "Exit",
+                  textAlign: TextAlign.center,
+                ),
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => PairScreen()),
+                      (route) => false);
+                },
+              ),
             ),
             this.config
                 ? Container(
