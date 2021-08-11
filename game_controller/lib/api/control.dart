@@ -8,11 +8,15 @@ Client client = Client();
 
 String token = "";
 
+int _ping = 9999;
+
 enum Action {
   tap,
   press,
   unPress,
 }
+
+int getPing() => _ping;
 
 class ButtonParams {
   String button;
@@ -21,6 +25,7 @@ class ButtonParams {
 }
 
 Future<void> pressButton(ButtonParams params) async {
+  DateTime now = DateTime.now();
   Response response = await client.put(Uri.parse(url + '/command'), body: {
     'token': token,
     'command': params.button,
@@ -30,6 +35,8 @@ Future<void> pressButton(ButtonParams params) async {
             ? 'leave'
             : 'tap'
   });
+  DateTime responseTime = DateTime.now();
+  _ping = responseTime.difference(now).inMilliseconds ~/ 2;
 }
 
 Future<bool> auth(String hostUrl, String pin) async {

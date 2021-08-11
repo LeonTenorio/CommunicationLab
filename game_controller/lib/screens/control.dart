@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:game_controller/api/control.dart';
 import 'package:game_controller/widgets/button.dart';
+
+final int pingSecondsTime = 2;
 
 class GamePad extends StatefulWidget {
   GamePad({Key? key}) : super(key: key);
@@ -31,10 +36,24 @@ class _GamePadState extends State<GamePad> {
   TextEditingController? textEditingController;
   WidgetSetActionFunction? saveButtonEdition;
 
+  int ping = 999;
+  Timer? pingTimer;
+
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
     super.initState();
+    this.pingTimer =
+        Timer.periodic(Duration(seconds: pingSecondsTime), (timer) {
+      this.ping = getPing();
+      if (this.mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    this.pingTimer!.cancel();
+    super.dispose();
   }
 
   void _resetButtons() {
@@ -93,6 +112,10 @@ class _GamePadState extends State<GamePad> {
         resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
+            Container(
+              padding: EdgeInsets.only(top: 40, left: 20.0),
+              child: Text(ping.toString() + "ms"),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
