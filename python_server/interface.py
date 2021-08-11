@@ -136,4 +136,6 @@ apiThread.start()
 window.read()
 
 window.close()
-cancel_flask()
+if(_currentCommand != None):
+    pyautogui.keyUp(_currentCommand)
+apiThread.kill()
