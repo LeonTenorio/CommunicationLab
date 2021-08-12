@@ -1,4 +1,6 @@
+from genericpath import isfile
 import subprocess
+from typing import final
 import PySimpleGUI as sg
 import os
 import pyqrcode
@@ -15,6 +17,7 @@ import pandas as pd
 import pyautogui
 import secrets
 import sys
+import time
 
 app = Flask(__name__)
 api = Api(app)
@@ -92,6 +95,9 @@ class Commands(Resource):
             return {}, 403
         global _secret
         _secret = secrets.token_hex(16)
+        with open(".secret.env", "w") as f:
+            f.write(_secret)
+        #window.write_event_value('Connected', 'connected')
         return {'token': _secret}, 200
 
     def get(self):
@@ -118,7 +124,8 @@ layout = [
         sg.Text("Welcome to the Wireless Game Pad project"),
     ],
     [
-        sg.Text("To connect your device you need to read that QrCode in the app"),
+        sg.Text(
+            "To connect your device you need to read that QrCode in the app", key="main"),
     ],
     [
         sg.Image(filename=os.getcwd()+'/qrcode.png', key='-IMAGE-')
@@ -129,13 +136,21 @@ layout = [
 ]
 
 window = sg.Window(title="Wirelesse Controller - Computer Client",
-                   layout=layout, margins=(100, 50))
+                   layout=layout, margins=(100, 50), finalize=True)
 
 apiThread = Process(target=call_flask)
 apiThread.start()
-window.read()
+while True:
+    event, values = window.read(timeout=10)
+    if(os.path.isfile('.secret.env')):
+        with open(".secret.env", "r") as f:
+            window['main'].Update('Connected')
+    if event == "OK" or event == sg.WIN_CLOSED:
+        break
+    time.sleep(1)
 
 window.close()
 if(_currentCommand != None):
     pyautogui.keyUp(_currentCommand)
+os.remove(".secret.env")
 apiThread.kill()
