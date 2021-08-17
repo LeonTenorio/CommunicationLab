@@ -97,28 +97,17 @@ class Commands(Resource):
         _secret = secrets.token_hex(16)
         with open(".secret.env", "w") as f:
             f.write(_secret)
-        #window.write_event_value('Connected', 'connected')
         return {'token': _secret}, 200
 
-    def get(self):
-        return {}, 200
 
-
-api.add_resource(Commands, '/command')
+api.add_resource(Commands, '/command')  # POST to pair and PUT to press a key
 
 
 def call_flask():
     app.run(local_ip, port=port)
-    # global flask
-    # flask = subprocess.Popen(
-    #     "python api.py "+str(address)+" "+str(port)+' '+str(pin), shell=True)
 
 
-def cancel_flask():
-    if(flask != None):
-        flask.kill()
-
-
+# Interface
 layout = [
     [
         sg.Text("Welcome to the Wireless Game Pad project"),
@@ -138,8 +127,11 @@ layout = [
 window = sg.Window(title="Wirelesse Controller - Computer Client",
                    layout=layout, margins=(100, 50), finalize=True)
 
+# Thread to run the flask app
 apiThread = Process(target=call_flask)
 apiThread.start()
+
+# Loop to execute the interface
 while True:
     event, values = window.read(timeout=10)
     if(os.path.isfile('.secret.env')):
@@ -149,8 +141,10 @@ while True:
         break
     time.sleep(1)
 
-window.close()
+# Close app
+window.close()  # Close window
 if(_currentCommand != None):
+    # If we have a current command, unpress that key
     pyautogui.keyUp(_currentCommand)
-os.remove(".secret.env")
-apiThread.kill()
+os.remove(".secret.env")  # Remove the secret token file
+apiThread.kill()  # Close the flask app
